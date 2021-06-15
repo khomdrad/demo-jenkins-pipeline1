@@ -1,0 +1,62 @@
+node {
+
+   stage('Run Unit Test') {
+      // Build an image for scanning
+      sh 'echo "Run Unit Test...."'
+   }
+   
+   stage('SonarQube Analysis') {
+      // Build an image for scanning
+      sh 'echo "SonarQube Analysis...."'
+   }
+   
+   stage('Quality Gate') {
+      // Build an image for scanning
+      sh 'echo "Quality Gate...."'
+   }
+
+   stage('Build Images') {
+      // Build an image for scanning
+      sh 'echo "FROM imiell/bad-dockerfile:latest" > Dockerfile'
+      sh 'docker build --no-cache -t test/test-image:0.1 .'
+   }
+
+
+   stage('PrismaCloud Images Scan') {
+      prismaCloudScanImage ca: '',
+        cert: '',
+        dockerAddress: 'unix:///var/run/docker.sock',
+        image: 'test/test-image*',
+        key: '',
+        logLevel: 'info',
+        podmanPath: '',
+        project: '',
+        resultsFile: 'prisma-cloud-scan-results.json',
+        ignoreImageBuildTime:true
+   }
+
+   stage('PrismaCloud Publish') {
+      prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
+  }
+  
+   stage('Push images to Registry') {
+      // Build an image for scanning
+      sh 'echo "Push images to Registry...."'
+   }
+   
+  stage('Deploy the UAT Application') {
+      // Build an image for scanning
+      sh 'echo "Deploy the Application...."'
+   } 
+   
+   stage('UAT Testing') {
+      // Build an image for scanning
+      sh 'echo "UAT Testing...."'
+   }
+   
+   stage('Performance Testing') {
+      // Build an image for scanning
+      sh 'echo "Performance Testin...."'
+   }
+   
+}
